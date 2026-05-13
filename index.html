@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Карта школы МБОУ СОШ №42 | План эвакуации и схема</title>
+    <title>Сравнительный анализ налогов: Россия и страны мира</title>
+    <!-- Подключение шрифтов и базовой стилизации -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (free icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,450 +16,529 @@
         }
 
         body {
-            background: #eef2f5;
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fc;
+            color: #1e2a3e;
             line-height: 1.5;
-            color: #1a2c3e;
-            padding: 20px;
+            padding: 2rem 1.5rem;
         }
 
-        /* главный контейнер */
-        .school-container {
+        .container {
             max-width: 1400px;
             margin: 0 auto;
-            background: white;
-            border-radius: 2rem;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            padding: 1.5rem 2rem 2rem 2rem;
-            transition: all 0.2s;
         }
 
-        /* заголовок */
+        /* Заголовок и описание */
         .hero {
             text-align: center;
-            margin-bottom: 2rem;
-            border-bottom: 3px solid #ff9800;
-            padding-bottom: 1rem;
+            margin-bottom: 2.5rem;
         }
 
         .hero h1 {
-            font-size: 2.3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #1e4a6e, #ff6f00);
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1A4D8C, #2C7DA0);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
             letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
         }
 
-        .hero .sub {
-            color: #2c5a7a;
-            font-weight: 500;
-            margin-top: 8px;
-            font-size: 1.05rem;
+        .hero p {
+            font-size: 1rem;
+            color: #2c3e4e;
+            max-width: 750px;
+            margin: 0 auto;
+            font-weight: 400;
         }
 
-        /* два столбца: карта (схема школы) + инструкции/выдержки */
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 0.9fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        /* Блок карты (стилизованная схема школы) */
-        .map-card {
-            background: #fef9ef;
-            border-radius: 1.5rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            border: 1px solid #ffe0b5;
-            transition: transform 0.2s;
-        }
-
-        .map-header {
-            background: #ff9800;
-            color: white;
-            padding: 0.8rem 1.2rem;
-            font-weight: bold;
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .map-header span:first-child {
-            font-size: 1.5rem;
-        }
-
-        .map-canvas {
-            padding: 1.5rem;
-        }
-
-        /* схема школы — стилизованная сетка "карта этажа" */
-        .school-floorplan {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-        }
-
-        .floor {
-            background: #fff6e8;
-            border-radius: 1.2rem;
-            padding: 0.8rem;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .floor-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-            background: #ffd89a;
+        .badge-date {
             display: inline-block;
-            padding: 0.2rem 1rem;
-            border-radius: 30px;
-            margin-bottom: 0.7rem;
-            color: #4a2c00;
-        }
-
-        .grid-rooms {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-            gap: 12px;
-        }
-
-        .room {
-            background: white;
-            border-radius: 14px;
-            padding: 8px 5px;
-            text-align: center;
-            font-size: 0.8rem;
+            background: #e9ecef;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
             font-weight: 500;
-            border: 1px solid #ffd7a5;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            position: relative;
+            margin-top: 0.8rem;
+            color: #1e4663;
         }
 
-        .room.exit {
-            background: #ffebc2;
-            border-left: 5px solid #2e7d32;
-            font-weight: bold;
-        }
-
-        .room.fire-ext {
-            background: #ffe0e0;
-            border-bottom: 3px solid #d32f2f;
-        }
-
-        .room.medic {
-            background: #e0f7fa;
-            border-bottom: 3px solid #0288d1;
-        }
-
-        .room.electric {
-            background: #e8eaf6;
-            border-bottom: 3px solid #5c6bc0;
-        }
-
-        .legend {
+        /* Управление: фильтр страны + кнопки */
+        .toolbar {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
-            padding-top: 12px;
-            border-top: 1px dashed #ffd29b;
-            font-size: 0.7rem;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
-        .legend span {
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 48px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-box i {
+            color: #5f7f9e;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            font-size: 0.9rem;
+            width: 100%;
+            outline: none;
+            font-weight: 500;
+        }
+
+        .view-options {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .btn-icon {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #2c3e4e;
             display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .badge {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        /* ПРАВАЯ ПАНЕЛЬ - документ и действия */
-        .info-panel {
-            background: #fafafc;
-            border-radius: 1.5rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-            overflow-y: auto;
-            max-height: 650px;
-        }
-
-        .info-header {
-            background: #2c3e66;
-            color: white;
-            padding: 0.8rem 1.2rem;
-            font-weight: bold;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: sticky;
-            top: 0;
-        }
-
-        .doc-content {
-            padding: 1.2rem 1.5rem;
-        }
-
-        .alert-section {
-            background: #fffbee;
-            border-left: 6px solid #ff9800;
-            margin: 1.2rem 0;
-            padding: 0.8rem 1rem;
-            border-radius: 12px;
-        }
-
-        .alert-title {
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: #c23b00;
-            display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .steps-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin: 1rem 0;
-        }
-
-        .step-card {
-            background: white;
-            padding: 0.7rem;
-            border-radius: 18px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            border: 1px solid #eef2f9;
-        }
-
-        .step-card strong {
-            color: #ff6d00;
-        }
-
-        .contact-block {
-            background: #eef2ff;
-            border-radius: 1rem;
-            padding: 0.8rem;
-            margin: 1rem 0;
-            font-family: monospace;
-            text-align: center;
-        }
-
-        .signs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            margin: 1rem 0;
-            justify-content: center;
-        }
-
-        .sign {
-            background: #2c3e66;
+        .btn-icon.active {
+            background: #1A4D8C;
             color: white;
-            border-radius: 40px;
-            padding: 0.3rem 1rem;
-            font-size: 0.75rem;
-            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(26, 77, 140, 0.2);
         }
 
-        hr {
-            margin: 1rem 0;
-            border-color: #e2e8f0;
+        .btn-icon i {
+            font-size: 0.85rem;
         }
 
-        footer {
-            text-align: center;
+        /* Таблица (основной вид) */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 24px;
+            background: white;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 780px;
+        }
+
+        .comparison-table th {
+            background: #f8fafc;
+            padding: 1rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            color: #0f2b3d;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+
+        .comparison-table td {
+            padding: 1rem 0.8rem;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: top;
+        }
+
+        .comparison-table tr:hover td {
+            background-color: #fafcff;
+        }
+
+        .country-name {
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .country-flag {
+            font-size: 1.2rem;
+        }
+
+        .tax-badge {
+            display: inline-block;
+            background: #eef2ff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #1e4a76;
+        }
+
+        .tax-highlight {
+            background: #ffe8e0;
+            color: #c2410c;
+            font-weight: 700;
+        }
+
+        .tooltip-note {
+            border-bottom: 1px dashed #90a4bc;
+            cursor: help;
+        }
+
+        .footnote {
+            margin-top: 1.8rem;
+            background: #eef2fa;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
             font-size: 0.75rem;
-            color: #5d6f83;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 1.5rem;
+            color: #2c5a7a;
+        }
+
+        /* карточный вид (grid) для мобильной альтернативы */
+        .cards-view {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.25rem;
             margin-top: 1rem;
         }
 
-        @media (max-width: 900px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            .school-container {
+        .cards-view.active {
+            display: grid;
+        }
+
+        .tax-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1rem 1.2rem;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e9edf2;
+            transition: 0.1s linear;
+        }
+
+        .tax-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #eef2f8;
+            padding-bottom: 0.5rem;
+        }
+
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.7rem;
+            font-size: 0.85rem;
+        }
+
+        .card-label {
+            font-weight: 500;
+            color: #4a627a;
+        }
+
+        .card-value {
+            font-weight: 600;
+            color: #1e2f3f;
+            text-align: right;
+        }
+
+        hr {
+            margin: 0.8rem 0;
+            border: none;
+            border-top: 1px solid #eef2f8;
+        }
+
+        @media (max-width: 680px) {
+            body {
                 padding: 1rem;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
             }
             .hero h1 {
                 font-size: 1.8rem;
             }
-        }
-
-        .emergency-icon {
-            font-size: 1.2rem;
-        }
-
-        .route {
-            background: #c8e6c9;
-            border-radius: 20px;
-            padding: 6px 12px;
-            display: inline-block;
-            font-size: 0.7rem;
-            font-weight: bold;
+            .btn-icon span {
+                display: none;
+            }
+            .btn-icon i {
+                margin: 0;
+            }
+            .btn-icon {
+                padding: 0.5rem 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
-<div class="school-container">
+<div class="container">
     <div class="hero">
-        <h1>🏫 КАРТА ШКОЛЫ МБОУ СОШ №42</h1>
-        <div class="sub">План эвакуации, пути движения, средства пожаротушения и медпомощи | Действия при пожаре и аварии</div>
-        <div class="sub" style="font-size:0.85rem; margin-top:5px;">📍 ООО "Спец ППР" | +7 978 752 1965 | o.spetzppr2014@yandex.ru</div>
+        <h1><i class="fas fa-chart-line" style="margin-right: 8px;"></i> Налоговый компас</h1>
+        <p>Сравнительный анализ ключевых налогов: Россия, США, Германия, ОАЭ, Сингапур, Канада, Великобритания и другие страны.</p>
+        <div class="badge-date"><i class="far fa-calendar-alt"></i> Актуальные ставки 2025 (основные режимы)</div>
     </div>
 
-    <div class="dashboard">
-        <!-- Левая колонка: схема школы / карта здания -->
-        <div class="map-card">
-            <div class="map-header">
-                <span>🗺️</span> <span>СХЕМА ЭТАЖЕЙ И ЭВАКУАЦИОННЫЕ ВЫХОДЫ</span>
-            </div>
-            <div class="map-canvas">
-                <div class="school-floorplan">
-                    <!-- 1 этаж - главный -->
-                    <div class="floor">
-                        <div class="floor-title">📍 1 ЭТАЖ (основной)</div>
-                        <div class="grid-rooms">
-                            <div class="room exit">🚪 ГЛАВНЫЙ ЭВАКУАЦИОННЫЙ ВЫХОД</div>
-                            <div class="room fire-ext">🧯 ОГНЕТУШИТЕЛЬ (пост охраны)</div>
-                            <div class="room electric">⚡ ЭЛЕКТРОЩИТ (коридор)</div>
-                            <div class="room medic">🩺 АПТЕЧКА ПЕРВОЙ ПОМОЩИ</div>
-                            <div class="room">📞 ТЕЛЕФОН 101/112</div>
-                            <div class="room">🏫 КАБИНЕТ 1-1</div>
-                            <div class="room">🏫 КАБИНЕТ 1-2</div>
-                        </div>
-                        <div style="margin-top:8px;"><span class="route">➡️ ПУТЬ К ОСНОВНОМУ ЭВАКУАЦИОННОМУ ВЫХОДУ (зеленые указатели)</span></div>
-                    </div>
-                    <!-- 2 этаж -->
-                    <div class="floor">
-                        <div class="floor-title">📍 2 ЭТАЖ</div>
-                        <div class="grid-rooms">
-                            <div class="room exit">🚪 ЗАПАСНОЙ ВЫХОД (лестница Б)</div>
-                            <div class="room fire-ext">🧯 ОГНЕТУШИТЕЛЬ (холл)</div>
-                            <div class="room">🏫 КАБ. 2-5</div>
-                            <div class="room">🏫 КАБ. 2-6</div>
-                            <div class="room medic">🆘 ПУНКТ МЕДПОМОЩИ</div>
-                            <div class="room electric">⚡ ЩИТОВАЯ</div>
-                        </div>
-                        <div style="margin-top:8px;"><span class="route">⬅️ ПУТЬ К ЗАПАСНОМУ ЭВАКУАЦИОННОМУ ВЫХОДУ (синие знаки)</span></div>
-                    </div>
-                    <!-- 3 этаж + коридоры -->
-                    <div class="floor">
-                        <div class="floor-title">📍 3 ЭТАЖ | АКТОВЫЙ ЗАЛ</div>
-                        <div class="grid-rooms">
-                            <div class="room exit">🚪 АВАРИЙНЫЙ ВЫХОД (спортзал)</div>
-                            <div class="room fire-ext">🔥 КНОПКА ВКЛЮЧЕНИЯ СИСТЕМ ПОЖАРНОЙ АВТОМАТИКИ</div>
-                            <div class="room">🏫 ЛАБОРАТОРИЯ</div>
-                            <div class="room">🏫 БИБЛИОТЕКА</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="legend">
-                    <span><div class="badge" style="background:#ffebc2; border-left:3px solid #2e7d32;"></div> Эвакуационный выход</span>
-                    <span><div class="badge" style="background:#ffe0e0;"></div> Огнетушитель / Пожарные средства</span>
-                    <span><div class="badge" style="background:#e0f7fa;"></div> Аптечка / Медпункт</span>
-                    <span><div class="badge" style="background:#e8eaf6;"></div> Электрощит</span>
-                    <span><span class="route" style="background:#c8e6c9;">🏃‍♂️ Направление движения к выходу</span></span>
-                </div>
-                <div style="margin-top: 16px; font-size: 0.7rem; background:#fff0db; border-radius: 20px; padding: 8px; text-align: center;">
-                    ⚠️ <strong>ВЫ НАХОДИТЕСЬ ЗДЕСЬ!</strong> (Схема размещена на каждом этаже у лестничных клеток)<br>
-                    🔔 КНОПКА ВКЛЮЧЕНИЯ СРЕДСТВ И СИСТЕМ ПОЖАРНОЙ АВТОМАТИКИ — красная на стене
-                </div>
-            </div>
+    <div class="toolbar">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Фильтр по стране...">
         </div>
-
-        <!-- Правая часть: Инструкции из документа/карта безопасности -->
-        <div class="info-panel">
-            <div class="info-header">
-                <span>📋 ДЕЙСТВИЯ ПРИ ЧС & ИНФОРМАЦИЯ</span> 
-                <span style="font-size:0.8rem;">ГОСТ Р 12.2.14.3-2009</span>
-            </div>
-            <div class="doc-content">
-                <!-- Поведение при пожаре из документа -->
-                <div class="alert-section">
-                    <div class="alert-title">🔥 ДЕЙСТВИЯ ПРИ ПОЖАРЕ</div>
-                    <div style="font-weight:600; margin: 5px 0;">СОХРАНЯЙТЕ СПОКОЙСТВИЕ!</div>
-                    <div class="steps-grid">
-                        <div class="step-card"><strong>📞 СООБЩИТЬ ПО ТЕЛЕФОНУ:</strong><br> 101, 112<br> <span style="font-size:0.7rem;">назвать адрес объекта, место пожара, свою фамилию, есть ли пострадавшие</span></div>
-                        <div class="step-card"><strong>🚪 ЭВАКУИРОВАТЬ ЛЮДЕЙ</strong><br> Ориентироваться по знакам направления движения → к основному/запасному выходу</div>
-                        <div class="step-card"><strong>🧯 ПРИНЯТЬ МЕРЫ ПО ТУШЕНИЮ ПОЖАРА</strong><br> использовать первичные средства (огнетушители), привести в действие систему пожарной защиты</div>
-                        <div class="step-card"><strong>🆘 ПОМОЩЬ ПОСТРАДАВШИМ</strong><br> взять с собой пострадавших, оказать первую помощь, использовать передвижные средства при необходимости</div>
-                    </div>
-                    <div><span class="sign">📍 АДРЕС ОБЪЕКТА указать при звонке</span> <span class="sign">🏷️ НАЗВАТЬ СВОЮ ФАМИЛИЮ</span></div>
-                    <ul style="margin-top: 8px; margin-left: 1.2rem; font-size:0.85rem;">
-                        <li>🔔 Привести в действие систему пожарной защиты (кнопка АПС)</li>
-                        <li>➡️ Ориентироваться по знакам направления движения (зеленые указатели)</li>
-                        <li>🩺 Обеспечить эвакуацию пострадавших, оказать первую медпомощь</li>
-                        <li>⚡ При необходимости обеспечить обесточивание (дежурный электрик)</li>
-                    </ul>
-                </div>
-
-                <!-- Действия при аварии (из документа) -->
-                <div class="alert-section" style="border-left-color: #2c6e9e;">
-                    <div class="alert-title">⚠️ ДЕЙСТВИЯ ПРИ АВАРИИ</div>
-                    <div style="font-weight:600;">СОХРАНЯЙТЕ СПОКОЙСТВИЕ!</div>
-                    <div class="steps-grid">
-                        <div class="step-card"><strong>📞 СООБЩИТЬ ПО ТЕЛЕФОНУ 101,112</strong><br> Адрес объекта, что случилось, имеются ли пострадавшие, свою фамилию</div>
-                        <div class="step-card"><strong>🏃 ЭВАКУИРОВАТЬ ЛЮДЕЙ</strong><br> По знакам направления, взять пострадавших, оказать помощь</div>
-                        <div class="step-card"><strong>🛡️ ПРИНЯТЬ МЕРЫ ПО ЛОКАЛИЗАЦИИ АВАРИИ</strong><br> использовать средства защиты, предотвратить развитие аварии</div>
-                        <div class="step-card"><strong>🚧 ОБОЗНАЧИТЬ МЕСТО АВАРИИ</strong><br> Ограждение, предупредительные знаки</div>
-                    </div>
-                    <div style="font-size:0.8rem; background:#fff0d6; border-radius:16px; padding: 6px; margin-top: 6px;">
-                        🧯 Использовать средства защиты согласно инструкции, дежурный персонал.
-                    </div>
-                </div>
-
-                <!-- Цитаты из документа: огнетушитель, электрощит и прочее -->
-                <div style="background:#f0f4f9; border-radius: 1rem; padding: 0.8rem; margin: 1rem 0;">
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between;">
-                        <div><span style="font-weight:bold;">🧯 ОГНЕТУШИТЕЛЬ</span><br> расположен на этажах у выходов</div>
-                        <div><span style="font-weight:bold;">⚡ ЭЛЕКТРОЩИТ</span><br> главный в коридоре 1 этажа, резервный в подвале</div>
-                        <div><span style="font-weight:bold;">🩺 АПТЕЧКА ПЕРВОЙ МЕДПОМОЩИ</span><br> медпункт и стенды на этажах</div>
-                        <div><span style="font-weight:bold;">📞 ТЕЛЕФОН</span><br> 101, 112 – единая служба</div>
-                    </div>
-                </div>
-
-                <!-- Направления эвакуации и выходы, как в исходном документе -->
-                <div class="contact-block">
-                    <strong>🚸 НАПРАВЛЕНИЕ ДВИЖЕНИЯ К ЭВАКУАЦИОННОМУ ВЫХОДУ</strong><br>
-                    ➡️ Основной выход (центральный вестибюль) ⬅️ Запасной выход (крыло спортзала)<br>
-                    <span style="font-size:0.7rem;">Следуйте указателям "ПУТЬ К ОСНОВНОМУ ЭВАКУАЦИОННОМУ ВЫХОДУ" / "ПУТЬ К ЗАПАСНОМУ ЭВАКУАЦИОННОМУ ВЫХОДУ"</span>
-                </div>
-
-                <!-- Копия контактов и дополнительная фраза про дежурного электрика -->
-                <div style="text-align: center; font-size:0.8rem; border-top: 1px solid #ccc; padding-top: 12px;">
-                    🧑‍🔧 Дежурный электрик: при необходимости отключить питание<br>
-                    📜 ООО "Спец ППР" | +7 978 752 1965  |  o.spetzppr2014@yandex.ru<br>
-                    <span style="font-family: monospace;">ГОСТ Р 12.2.14.3-2009 | 180-20-1440-ХЗ</span>
-                </div>
-
-                <!-- Блок "ВЫ НАХОДИТЕСЬ ЗДЕСЬ!" по тексту документа -->
-                <div style="background: #ffeedd; margin-top: 1rem; border-radius: 30px; padding: 8px 12px; text-align: center; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                    🟢 <span>ВЫ НАХОДИТЕСЬ ЗДЕСЬ! — План эвакуации на каждом этаже.</span>
-                </div>
-            </div>
+        <div class="view-options">
+            <button id="tableViewBtn" class="btn-icon active"><i class="fas fa-table"></i><span>Таблица</span></button>
+            <button id="cardsViewBtn" class="btn-icon"><i class="fas fa-id-card"></i><span>Карточки</span></button>
         </div>
     </div>
 
-    <!-- Footer с ссылкой на полный документ, а также перечень всех элементов из скана -->
-    <footer>
-        <div>🧯 Карта-схема МБОУ СОШ №42 разработана в соответствии с требованиями пожарной безопасности. На схеме отображены: огнетушители, электрощиты, аптечки, телефоны, основные и запасные эвакуационные выходы, направления движения.</div>
-        <div style="margin-top: 0.5rem;">✅ Документ содержит: действия при пожаре, действия при аварии, телефоны 101,112, меры по тушению пожара, локализации аварии, эвакуацию людей, помощь пострадавшим, использование передвижных средств, обеспечение помещения, дежурный электрик.</div>
-        <div style="margin-top: 0.8rem;">© 2025 МБОУ СОШ №42 — Карта эвакуации и безопасности. Версия 1.0</div>
-    </footer>
+    <!-- Таблица -->
+    <div id="tableView" class="table-wrapper">
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Страна</th>
+                    <th>Налог на прибыль (корпоративный)</th>
+                    <th>НДС / GST / налог с продаж</th>
+                    <th>НДФЛ (макс. ставка)</th>
+                    <th>Социальные взносы (работодатель)</th>
+                    <th>Особенности / Рейтинг нагрузки</th>
+                </tr>
+                </thead>
+                <tbody id="taxTableBody">
+                    <!-- данные из JS -->
+                </tbody>
+        </table>
+    </div>
+
+    <!-- Карточный вид -->
+    <div id="cardsView" class="cards-view"></div>
+
+    <div class="footnote">
+        <i class="fas fa-info-circle"></i> Данные основаны на исследованиях налоговых систем (OECD, PwC, локальные источники). Социальные взносы и НДФЛ приведены для стандартных режимов. В ОАЭ корпоративный налог 9% для прибыли свыше 375k AED, для свободных зон 0%. В РФ сниженные страховые взносы для МСП — 15% с выплат сверх МРОТ. Цель — сравнительный анализ, проконсультируйтесь со специалистом.
+    </div>
 </div>
+
+<script>
+    // База данных: страны с основными налоговыми показателями
+    const taxData = [
+        {
+            id: 1,
+            name: "Россия",
+            flag: "🇷🇺",
+            corporateTax: "20% (стандарт)",
+            vat: "20% (10% льготный)",
+            personalIncomeTax: "13% / 15% (свыше 5 млн ₽)",
+            socialEmployer: "30% (15% для МСП)",
+            note: "НДФЛ 13% базовая, повышенная 15% для доходов >5 млн ₽. Соцвзносы 30% (пенс., мед., соцстрах)."
+        },
+        {
+            id: 2,
+            name: "США",
+            flag: "🇺🇸",
+            corporateTax: "21% (федеральный)",
+            vat: "Нет (Sales Tax 0-10% штатный)",
+            personalIncomeTax: "37% (фед.) + штатный",
+            socialEmployer: "7.65% (FICA)",
+            note: "Корпоративный налог 21% федеральный, плюс налоги штатов. НДС отсутствует, налог с продаж местный."
+        },
+        {
+            id: 3,
+            name: "Германия",
+            flag: "🇩🇪",
+            corporateTax: "≈29.9% (15% корп. + солидарн. + торг.)",
+            vat: "19% (7% сниженный)",
+            personalIncomeTax: "45% (солидарный налог)",
+            socialEmployer: "≈19.3% (пенс., мед., страх.)",
+            note: "Эффективная ставка на прибыль ~29-33% в зависимости от муниципалитета. НДФЛ прогрессия до 45%."
+        },
+        {
+            id: 4,
+            name: "ОАЭ",
+            flag: "🇦🇪",
+            corporateTax: "9% (>375k AED), 0% для зон",
+            vat: "5% (стандартный)",
+            personalIncomeTax: "0%",
+            socialEmployer: "~12.5% (для граждан ОАЭ только)",
+            note: "Нет личного подоходного налога. Корпоративный с 2023 г. НДС 5%. Для экспатов соцвзносы не взимаются."
+        },
+        {
+            id: 5,
+            name: "Сингапур",
+            flag: "🇸🇬",
+            corporateTax: "17% (льготы до 4.25% для стартапов)",
+            vat: "9% (GST, повышен с 8% в 2024)",
+            personalIncomeTax: "22% (прогрессия до 24% с 2024)",
+            socialEmployer: "17% (CPF, для граждан/ПМЖ)",
+            note: "Корпоративный налог эффективно ниже за счёт льгот. CPF для местных, для экспатов без взносов."
+        },
+        {
+            id: 6,
+            name: "Великобритания",
+            flag: "🇬🇧",
+            corporateTax: "25% (прибыль >250k £, 19% для малых)",
+            vat: "20% (5% сниженный)",
+            personalIncomeTax: "45% (доп. ставка)",
+            socialEmployer: "13.8% (NIC)",
+            note: "Корпоративная ставка повышена с 2023 г. Налог на прибыль дифференцирован."
+        },
+        {
+            id: 7,
+            name: "Канада",
+            flag: "🇨🇦",
+            corporateTax: "26.5% (общая: фед.15%+провинц.)",
+            vat: "5% GST + провинц. (от 0 до 10%)",
+            personalIncomeTax: "33% (фед.) + провинц. до ~54%",
+            socialEmployer: "~11.5% (CPP/EI)",
+            note: "Совокупный корпоративный налог варьируется, эффективно ~26-31%. Налог с продаж комбинированный."
+        },
+        {
+            id: 8,
+            name: "Китай",
+            flag: "🇨🇳",
+            corporateTax: "25% (льготы 15% для high-tech)",
+            vat: "13% (основной, 6% для услуг)",
+            personalIncomeTax: "45% (прогрессия)",
+            socialEmployer: "~28% (город, пенс., мед.)",
+            note: "Социальные взносы высокие, местные вариации. Налог на добавленную стоимость стандартный."
+        },
+        {
+            id: 9,
+            name: "Индия",
+            flag: "🇮🇳",
+            corporateTax: "22% (без льгот), 15% для новых заводов",
+            vat: "GST 18% (5%,12%,28%)",
+            personalIncomeTax: "39% ( + cess)",
+            socialEmployer: "~12% (EPF + иные)",
+            note: "Корпоративный налог снижен для стимулирования. GST заменил многие косвенные налоги."
+        },
+        {
+            id: 10,
+            name: "Швеция",
+            flag: "🇸🇪",
+            corporateTax: "20.6%",
+            vat: "25% (12%,6% сниженные)",
+            personalIncomeTax: "≈52% (муниц.+гос.)",
+            socialEmployer: "31.42%",
+            note: "Очень высокие социальные платежи, но обширная соцподдержка. НДС стандарт 25%"
+        }
+    ];
+
+    // Рендер функций
+    let currentView = 'table'; // 'table' or 'cards'
+    let filterText = '';
+
+    const tbody = document.getElementById('taxTableBody');
+    const cardsContainer = document.getElementById('cardsView');
+    const searchInput = document.getElementById('searchInput');
+    const tableViewBtn = document.getElementById('tableViewBtn');
+    const cardsViewBtn = document.getElementById('cardsViewBtn');
+
+    function filterData() {
+        const term = filterText.trim().toLowerCase();
+        if (!term) return taxData;
+        return taxData.filter(country => country.name.toLowerCase().includes(term));
+    }
+
+    function renderTable() {
+        const filtered = filterData();
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem;">📭 Нет стран по вашему запросу</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = filtered.map(country => `
+            <tr>
+                <td class="country-name"><span class="country-flag">${country.flag}</span> ${country.name}</td>
+                <td><span class="tax-badge">${country.corporateTax}</span></td>
+                <td>${country.vat}</td>
+                <td>${country.personalIncomeTax}</td>
+                <td>${country.socialEmployer}</td>
+                <td><span class="tooltip-note" title="${country.note.replace(/"/g, '&quot;')}">📘 ${country.note.substring(0, 55)}${country.note.length > 55 ? '…' : ''}</span></td>
+            </tr>
+        `).join('');
+    }
+
+    function renderCards() {
+        const filtered = filterData();
+        if (filtered.length === 0) {
+            cardsContainer.innerHTML = `<div style="padding: 2rem; text-align: center; background: white; border-radius: 28px;">✨ Нет данных для отображения</div>`;
+            return;
+        }
+        cardsContainer.innerHTML = filtered.map(country => `
+            <div class="tax-card">
+                <h3><span>${country.flag}</span> ${country.name}</h3>
+                <div class="card-row"><span class="card-label"><i class="fas fa-building"></i> Налог на прибыль</span><span class="card-value">${country.corporateTax}</span></div>
+                <div class="card-row"><span class="card-label"><i class="fas fa-receipt"></i> НДС / GST</span><span class="card-value">${country.vat}</span></div>
+                <div class="card-row"><span class="card-label"><i class="fas fa-user"></i> НДФЛ (макс.)</span><span class="card-value">${country.personalIncomeTax}</span></div>
+                <div class="card-row"><span class="card-label"><i class="fas fa-hand-holding-heart"></i> Соцвзносы (раб.)</span><span class="card-value">${country.socialEmployer}</span></div>
+                <hr>
+                <div class="card-row"><span class="card-label"><i class="fas fa-info-circle"></i> Детали</span><span class="card-value" style="font-weight: normal; font-size:0.8rem;">${country.note}</span></div>
+            </div>
+        `).join('');
+    }
+
+    function updateView() {
+        const tableViewEl = document.getElementById('tableView');
+        const cardsViewEl = document.getElementById('cardsView');
+        if (currentView === 'table') {
+            tableViewEl.style.display = 'block';
+            cardsViewEl.classList.remove('active');
+            renderTable();
+        } else {
+            tableViewEl.style.display = 'none';
+            cardsViewEl.classList.add('active');
+            renderCards();
+        }
+        // highlight кнопок
+        if (currentView === 'table') {
+            tableViewBtn.classList.add('active');
+            cardsViewBtn.classList.remove('active');
+        } else {
+            cardsViewBtn.classList.add('active');
+            tableViewBtn.classList.remove('active');
+        }
+    }
+
+    // События фильтрации и смены вида
+    searchInput.addEventListener('input', (e) => {
+        filterText = e.target.value;
+        if (currentView === 'table') renderTable();
+        else renderCards();
+    });
+
+    tableViewBtn.addEventListener('click', () => {
+        if (currentView === 'table') return;
+        currentView = 'table';
+        updateView();
+    });
+
+    cardsViewBtn.addEventListener('click', () => {
+        if (currentView === 'cards') return;
+        currentView = 'cards';
+        updateView();
+    });
+
+    // вспомогательная функция приведения view в порядок (при загрузке)
+    function init() {
+        currentView = 'table';
+        updateView();
+    }
+
+    init();
+</script>
 </body>
 </html>
