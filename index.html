@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Интерактивная карта школы | Навигация по зданию</title>
-    <!-- Подключение шрифтов и базовых стилей -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Карта школы МБОУ СОШ №42 | План эвакуации и схема</title>
     <style>
         * {
             margin: 0;
@@ -15,521 +12,450 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: #eef2f7;
-            color: #1e2a3e;
-            line-height: 1.4;
+            background: #eef2f5;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            color: #1a2c3e;
+            padding: 20px;
         }
 
-        /* Верхняя панель с заголовком и управлением */
-        .header {
-            background: linear-gradient(135deg, #1f4e3d, #0f2c24);
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 10;
-        }
-
-        .header-container {
+        /* главный контейнер */
+        .school-container {
             max-width: 1400px;
             margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: baseline;
-            justify-content: space-between;
-            gap: 1rem;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            padding: 1.5rem 2rem 2rem 2rem;
+            transition: all 0.2s;
         }
 
-        .title-section h1 {
-            font-weight: 700;
-            font-size: 1.8rem;
+        /* заголовок */
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid #ff9800;
+            padding-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e4a6e, #ff6f00);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
             letter-spacing: -0.3px;
+        }
+
+        .hero .sub {
+            color: #2c5a7a;
+            font-weight: 500;
+            margin-top: 8px;
+            font-size: 1.05rem;
+        }
+
+        /* два столбца: карта (схема школы) + инструкции/выдержки */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 0.9fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Блок карты (стилизованная схема школы) */
+        .map-card {
+            background: #fef9ef;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            border: 1px solid #ffe0b5;
+            transition: transform 0.2s;
+        }
+
+        .map-header {
+            background: #ff9800;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            font-weight: bold;
+            font-size: 1.25rem;
             display: flex;
             align-items: center;
+            gap: 10px;
+        }
+
+        .map-header span:first-child {
+            font-size: 1.5rem;
+        }
+
+        .map-canvas {
+            padding: 1.5rem;
+        }
+
+        /* схема школы — стилизованная сетка "карта этажа" */
+        .school-floorplan {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .floor {
+            background: #fff6e8;
+            border-radius: 1.2rem;
+            padding: 0.8rem;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .floor-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            background: #ffd89a;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            margin-bottom: 0.7rem;
+            color: #4a2c00;
+        }
+
+        .grid-rooms {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
             gap: 12px;
         }
 
-        .title-section h1 i {
-            font-size: 2rem;
-            color: #ffcf4a;
+        .room {
+            background: white;
+            border-radius: 14px;
+            padding: 8px 5px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid #ffd7a5;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: relative;
         }
 
-        .title-section p {
-            font-size: 0.9rem;
-            opacity: 0.85;
-            margin-top: 6px;
+        .room.exit {
+            background: #ffebc2;
+            border-left: 5px solid #2e7d32;
+            font-weight: bold;
         }
 
-        .controls {
+        .room.fire-ext {
+            background: #ffe0e0;
+            border-bottom: 3px solid #d32f2f;
+        }
+
+        .room.medic {
+            background: #e0f7fa;
+            border-bottom: 3px solid #0288d1;
+        }
+
+        .room.electric {
+            background: #e8eaf6;
+            border-bottom: 3px solid #5c6bc0;
+        }
+
+        .legend {
             display: flex;
+            flex-wrap: wrap;
             gap: 15px;
-            background: rgba(255,255,255,0.12);
-            padding: 0.5rem 1rem;
-            border-radius: 48px;
-            backdrop-filter: blur(4px);
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px dashed #ffd29b;
+            font-size: 0.7rem;
         }
 
-        .ctrl-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            font-size: 1rem;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 32px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .legend span {
             display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .ctrl-btn i {
-            font-size: 1rem;
-        }
-
-        .ctrl-btn:hover {
-            background: #ffcf4a;
-            color: #1e2a3e;
-            transform: translateY(-2px);
-        }
-
-        .zoom-indicator {
-            background: #1e2a3ecc;
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: flex;
             align-items: center;
             gap: 5px;
         }
 
-        /* Основной контейнер с картой */
-        .map-container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
+        .badge {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            display: inline-block;
         }
 
-        /* Карточка-обёртка для PDF с эффектом "карта" */
-        .map-card {
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.25);
-            overflow: hidden;
-            transition: all 0.2s;
-            border: 1px solid rgba(0,0,0,0.05);
+        /* ПРАВАЯ ПАНЕЛЬ - документ и действия */
+        .info-panel {
+            background: #fafafc;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            overflow-y: auto;
+            max-height: 650px;
         }
 
-        /* Тулуб для просмотра PDF с зумом и панорамированием */
-        .pdf-viewer-wrapper {
-            position: relative;
-            background: #f9fafb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 70vh;
-            overflow: auto;
-            border-radius: 28px;
-        }
-
-        /* Канвас/область масштабирования — используем масштабируемый контейнер */
-        .pdf-zoom-container {
-            overflow: auto;
-            max-height: 75vh;
-            background: #e9ecef;
-            border-radius: 28px;
-            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
-            transition: all 0.1s ease;
-        }
-
-        .pdf-canvas {
-            display: block;
-            margin: 0 auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            background: white;
-            border-radius: 8px;
-            transition: transform 0.1s linear;
-            transform-origin: 0 0;
-        }
-
-        /* Легенда карты-школы */
-        .legend-panel {
-            margin-top: 1.8rem;
-            background: white;
-            border-radius: 28px;
-            padding: 1.2rem 1.8rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-
-        .legend-items {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-
-        .legend-item {
+        .info-header {
+            background: #2c3e66;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            font-weight: bold;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            font-size: 0.9rem;
-            font-weight: 500;
+            gap: 12px;
+            position: sticky;
+            top: 0;
         }
 
-        .legend-color {
-            width: 24px;
-            height: 24px;
-            border-radius: 8px;
-            background: #2c7a4d;
+        .doc-content {
+            padding: 1.2rem 1.5rem;
         }
 
-        .legend-color.entrance { background: #f4b942; }
-        .legend-color.library { background: #4f8bc9; }
-        .legend-color.canteen { background: #e06c6c; }
-        .legend-color.gym { background: #9b6b9e; }
-        .legend-color.classroom { background: #3a8c7e; }
+        .alert-section {
+            background: #fffbee;
+            border-left: 6px solid #ff9800;
+            margin: 1.2rem 0;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+        }
 
-        .info-note {
-            font-size: 0.8rem;
-            color: #5f6c7a;
+        .alert-title {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #c23b00;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .info-note i {
-            color: #ffcf4a;
-            font-size: 1rem;
+        .steps-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
         }
 
-        /* футер */
-        .footer {
+        .step-card {
+            background: white;
+            padding: 0.7rem;
+            border-radius: 18px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #eef2f9;
+        }
+
+        .step-card strong {
+            color: #ff6d00;
+        }
+
+        .contact-block {
+            background: #eef2ff;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            font-family: monospace;
             text-align: center;
-            padding: 1.8rem;
-            color: #5f6c7a;
-            font-size: 0.8rem;
-            border-top: 1px solid #dce3e9;
+        }
+
+        .signs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1rem 0;
+            justify-content: center;
+        }
+
+        .sign {
+            background: #2c3e66;
+            color: white;
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border-color: #e2e8f0;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #5d6f83;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1.5rem;
             margin-top: 1rem;
         }
 
-        /* адаптив */
-        @media (max-width: 750px) {
-            .header-container {
-                flex-direction: column;
-                align-items: flex-start;
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
             }
-            .controls {
-                align-self: flex-start;
+            .school-container {
+                padding: 1rem;
             }
-            .legend-items {
-                gap: 0.8rem;
-            }
-            .pdf-zoom-container {
-                max-height: 60vh;
+            .hero h1 {
+                font-size: 1.8rem;
             }
         }
 
-        /* подсказка по зуму */
-        .tooltip-zoom {
-            position: absolute;
-            bottom: 16px;
-            right: 20px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px);
-            color: white;
-            padding: 8px 14px;
-            border-radius: 60px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            pointer-events: none;
-            z-index: 20;
-            font-family: monospace;
-            letter-spacing: 0.3px;
+        .emergency-icon {
+            font-size: 1.2rem;
         }
 
-        button:active {
-            transform: scale(0.97);
-        }
-
-        .loading-placeholder {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem;
-            background: #f8fafc;
-            border-radius: 28px;
-            gap: 1rem;
-            color: #2c5f4e;
-            font-weight: 500;
+        .route {
+            background: #c8e6c9;
+            border-radius: 20px;
+            padding: 6px 12px;
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: bold;
         }
     </style>
-    <!-- PDF.js из CDN (стабильная версия) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script>
-        // Устанавливаем workerSrc для корректной работы
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-    </script>
 </head>
 <body>
-
-<div class="header">
-    <div class="header-container">
-        <div class="title-section">
-            <h1>
-                <i class="fas fa-map"></i> 
-                Школьный навигатор · Карта учебного корпуса
-            </h1>
-            <p>Интерактивная схема этажей и кабинетов | Ориентируйся с комфортом</p>
-        </div>
-        <div class="controls">
-            <button class="ctrl-btn" id="zoomInBtn" title="Приблизить карту"><i class="fas fa-search-plus"></i> +</button>
-            <button class="ctrl-btn" id="zoomOutBtn" title="Отдалить карту"><i class="fas fa-search-minus"></i> -</button>
-            <button class="ctrl-btn" id="resetZoomBtn" title="Сбросить масштаб"><i class="fas fa-sync-alt"></i> Сброс</button>
-            <div class="zoom-indicator" id="zoomLevelDisplay"><i class="fas fa-magnifying-glass"></i> 100%</div>
-        </div>
+<div class="school-container">
+    <div class="hero">
+        <h1>🏫 КАРТА ШКОЛЫ МБОУ СОШ №42</h1>
+        <div class="sub">План эвакуации, пути движения, средства пожаротушения и медпомощи | Действия при пожаре и аварии</div>
+        <div class="sub" style="font-size:0.85rem; margin-top:5px;">📍 ООО "Спец ППР" | +7 978 752 1965 | o.spetzppr2014@yandex.ru</div>
     </div>
-</div>
 
-<div class="map-container">
-    <div class="map-card">
-        <div class="pdf-viewer-wrapper">
-            <div id="pdfZoomContainer" class="pdf-zoom-container" style="overflow: auto; max-width: 100%;">
-                <!-- Здесь будет отрисован canvas с картой школы -->
-                <canvas id="schoolMapCanvas" class="pdf-canvas" style="display: block;"></canvas>
+    <div class="dashboard">
+        <!-- Левая колонка: схема школы / карта здания -->
+        <div class="map-card">
+            <div class="map-header">
+                <span>🗺️</span> <span>СХЕМА ЭТАЖЕЙ И ЭВАКУАЦИОННЫЕ ВЫХОДЫ</span>
             </div>
-            <div class="tooltip-zoom">
-                <i class="fas fa-hand-pointer"></i> Прокрутка + Ctrl / жесты для приближения
+            <div class="map-canvas">
+                <div class="school-floorplan">
+                    <!-- 1 этаж - главный -->
+                    <div class="floor">
+                        <div class="floor-title">📍 1 ЭТАЖ (основной)</div>
+                        <div class="grid-rooms">
+                            <div class="room exit">🚪 ГЛАВНЫЙ ЭВАКУАЦИОННЫЙ ВЫХОД</div>
+                            <div class="room fire-ext">🧯 ОГНЕТУШИТЕЛЬ (пост охраны)</div>
+                            <div class="room electric">⚡ ЭЛЕКТРОЩИТ (коридор)</div>
+                            <div class="room medic">🩺 АПТЕЧКА ПЕРВОЙ ПОМОЩИ</div>
+                            <div class="room">📞 ТЕЛЕФОН 101/112</div>
+                            <div class="room">🏫 КАБИНЕТ 1-1</div>
+                            <div class="room">🏫 КАБИНЕТ 1-2</div>
+                        </div>
+                        <div style="margin-top:8px;"><span class="route">➡️ ПУТЬ К ОСНОВНОМУ ЭВАКУАЦИОННОМУ ВЫХОДУ (зеленые указатели)</span></div>
+                    </div>
+                    <!-- 2 этаж -->
+                    <div class="floor">
+                        <div class="floor-title">📍 2 ЭТАЖ</div>
+                        <div class="grid-rooms">
+                            <div class="room exit">🚪 ЗАПАСНОЙ ВЫХОД (лестница Б)</div>
+                            <div class="room fire-ext">🧯 ОГНЕТУШИТЕЛЬ (холл)</div>
+                            <div class="room">🏫 КАБ. 2-5</div>
+                            <div class="room">🏫 КАБ. 2-6</div>
+                            <div class="room medic">🆘 ПУНКТ МЕДПОМОЩИ</div>
+                            <div class="room electric">⚡ ЩИТОВАЯ</div>
+                        </div>
+                        <div style="margin-top:8px;"><span class="route">⬅️ ПУТЬ К ЗАПАСНОМУ ЭВАКУАЦИОННОМУ ВЫХОДУ (синие знаки)</span></div>
+                    </div>
+                    <!-- 3 этаж + коридоры -->
+                    <div class="floor">
+                        <div class="floor-title">📍 3 ЭТАЖ | АКТОВЫЙ ЗАЛ</div>
+                        <div class="grid-rooms">
+                            <div class="room exit">🚪 АВАРИЙНЫЙ ВЫХОД (спортзал)</div>
+                            <div class="room fire-ext">🔥 КНОПКА ВКЛЮЧЕНИЯ СИСТЕМ ПОЖАРНОЙ АВТОМАТИКИ</div>
+                            <div class="room">🏫 ЛАБОРАТОРИЯ</div>
+                            <div class="room">🏫 БИБЛИОТЕКА</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend">
+                    <span><div class="badge" style="background:#ffebc2; border-left:3px solid #2e7d32;"></div> Эвакуационный выход</span>
+                    <span><div class="badge" style="background:#ffe0e0;"></div> Огнетушитель / Пожарные средства</span>
+                    <span><div class="badge" style="background:#e0f7fa;"></div> Аптечка / Медпункт</span>
+                    <span><div class="badge" style="background:#e8eaf6;"></div> Электрощит</span>
+                    <span><span class="route" style="background:#c8e6c9;">🏃‍♂️ Направление движения к выходу</span></span>
+                </div>
+                <div style="margin-top: 16px; font-size: 0.7rem; background:#fff0db; border-radius: 20px; padding: 8px; text-align: center;">
+                    ⚠️ <strong>ВЫ НАХОДИТЕСЬ ЗДЕСЬ!</strong> (Схема размещена на каждом этаже у лестничных клеток)<br>
+                    🔔 КНОПКА ВКЛЮЧЕНИЯ СРЕДСТВ И СИСТЕМ ПОЖАРНОЙ АВТОМАТИКИ — красная на стене
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая часть: Инструкции из документа/карта безопасности -->
+        <div class="info-panel">
+            <div class="info-header">
+                <span>📋 ДЕЙСТВИЯ ПРИ ЧС & ИНФОРМАЦИЯ</span> 
+                <span style="font-size:0.8rem;">ГОСТ Р 12.2.14.3-2009</span>
+            </div>
+            <div class="doc-content">
+                <!-- Поведение при пожаре из документа -->
+                <div class="alert-section">
+                    <div class="alert-title">🔥 ДЕЙСТВИЯ ПРИ ПОЖАРЕ</div>
+                    <div style="font-weight:600; margin: 5px 0;">СОХРАНЯЙТЕ СПОКОЙСТВИЕ!</div>
+                    <div class="steps-grid">
+                        <div class="step-card"><strong>📞 СООБЩИТЬ ПО ТЕЛЕФОНУ:</strong><br> 101, 112<br> <span style="font-size:0.7rem;">назвать адрес объекта, место пожара, свою фамилию, есть ли пострадавшие</span></div>
+                        <div class="step-card"><strong>🚪 ЭВАКУИРОВАТЬ ЛЮДЕЙ</strong><br> Ориентироваться по знакам направления движения → к основному/запасному выходу</div>
+                        <div class="step-card"><strong>🧯 ПРИНЯТЬ МЕРЫ ПО ТУШЕНИЮ ПОЖАРА</strong><br> использовать первичные средства (огнетушители), привести в действие систему пожарной защиты</div>
+                        <div class="step-card"><strong>🆘 ПОМОЩЬ ПОСТРАДАВШИМ</strong><br> взять с собой пострадавших, оказать первую помощь, использовать передвижные средства при необходимости</div>
+                    </div>
+                    <div><span class="sign">📍 АДРЕС ОБЪЕКТА указать при звонке</span> <span class="sign">🏷️ НАЗВАТЬ СВОЮ ФАМИЛИЮ</span></div>
+                    <ul style="margin-top: 8px; margin-left: 1.2rem; font-size:0.85rem;">
+                        <li>🔔 Привести в действие систему пожарной защиты (кнопка АПС)</li>
+                        <li>➡️ Ориентироваться по знакам направления движения (зеленые указатели)</li>
+                        <li>🩺 Обеспечить эвакуацию пострадавших, оказать первую медпомощь</li>
+                        <li>⚡ При необходимости обеспечить обесточивание (дежурный электрик)</li>
+                    </ul>
+                </div>
+
+                <!-- Действия при аварии (из документа) -->
+                <div class="alert-section" style="border-left-color: #2c6e9e;">
+                    <div class="alert-title">⚠️ ДЕЙСТВИЯ ПРИ АВАРИИ</div>
+                    <div style="font-weight:600;">СОХРАНЯЙТЕ СПОКОЙСТВИЕ!</div>
+                    <div class="steps-grid">
+                        <div class="step-card"><strong>📞 СООБЩИТЬ ПО ТЕЛЕФОНУ 101,112</strong><br> Адрес объекта, что случилось, имеются ли пострадавшие, свою фамилию</div>
+                        <div class="step-card"><strong>🏃 ЭВАКУИРОВАТЬ ЛЮДЕЙ</strong><br> По знакам направления, взять пострадавших, оказать помощь</div>
+                        <div class="step-card"><strong>🛡️ ПРИНЯТЬ МЕРЫ ПО ЛОКАЛИЗАЦИИ АВАРИИ</strong><br> использовать средства защиты, предотвратить развитие аварии</div>
+                        <div class="step-card"><strong>🚧 ОБОЗНАЧИТЬ МЕСТО АВАРИИ</strong><br> Ограждение, предупредительные знаки</div>
+                    </div>
+                    <div style="font-size:0.8rem; background:#fff0d6; border-radius:16px; padding: 6px; margin-top: 6px;">
+                        🧯 Использовать средства защиты согласно инструкции, дежурный персонал.
+                    </div>
+                </div>
+
+                <!-- Цитаты из документа: огнетушитель, электрощит и прочее -->
+                <div style="background:#f0f4f9; border-radius: 1rem; padding: 0.8rem; margin: 1rem 0;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between;">
+                        <div><span style="font-weight:bold;">🧯 ОГНЕТУШИТЕЛЬ</span><br> расположен на этажах у выходов</div>
+                        <div><span style="font-weight:bold;">⚡ ЭЛЕКТРОЩИТ</span><br> главный в коридоре 1 этажа, резервный в подвале</div>
+                        <div><span style="font-weight:bold;">🩺 АПТЕЧКА ПЕРВОЙ МЕДПОМОЩИ</span><br> медпункт и стенды на этажах</div>
+                        <div><span style="font-weight:bold;">📞 ТЕЛЕФОН</span><br> 101, 112 – единая служба</div>
+                    </div>
+                </div>
+
+                <!-- Направления эвакуации и выходы, как в исходном документе -->
+                <div class="contact-block">
+                    <strong>🚸 НАПРАВЛЕНИЕ ДВИЖЕНИЯ К ЭВАКУАЦИОННОМУ ВЫХОДУ</strong><br>
+                    ➡️ Основной выход (центральный вестибюль) ⬅️ Запасной выход (крыло спортзала)<br>
+                    <span style="font-size:0.7rem;">Следуйте указателям "ПУТЬ К ОСНОВНОМУ ЭВАКУАЦИОННОМУ ВЫХОДУ" / "ПУТЬ К ЗАПАСНОМУ ЭВАКУАЦИОННОМУ ВЫХОДУ"</span>
+                </div>
+
+                <!-- Копия контактов и дополнительная фраза про дежурного электрика -->
+                <div style="text-align: center; font-size:0.8rem; border-top: 1px solid #ccc; padding-top: 12px;">
+                    🧑‍🔧 Дежурный электрик: при необходимости отключить питание<br>
+                    📜 ООО "Спец ППР" | +7 978 752 1965  |  o.spetzppr2014@yandex.ru<br>
+                    <span style="font-family: monospace;">ГОСТ Р 12.2.14.3-2009 | 180-20-1440-ХЗ</span>
+                </div>
+
+                <!-- Блок "ВЫ НАХОДИТЕСЬ ЗДЕСЬ!" по тексту документа -->
+                <div style="background: #ffeedd; margin-top: 1rem; border-radius: 30px; padding: 8px 12px; text-align: center; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    🟢 <span>ВЫ НАХОДИТЕСЬ ЗДЕСЬ! — План эвакуации на каждом этаже.</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Легенда карты (дополнительная навигация) -->
-    <div class="legend-panel">
-        <div class="legend-items">
-            <div class="legend-item"><div class="legend-color entrance"></div> Входы / Выходы</div>
-            <div class="legend-item"><div class="legend-color library"></div> Библиотека / Медиатека</div>
-            <div class="legend-item"><div class="legend-color canteen"></div> Столовая / Буфет</div>
-            <div class="legend-item"><div class="legend-color gym"></div> Спортзал / Актовый зал</div>
-            <div class="legend-item"><div class="legend-color classroom"></div> Учебные классы / Лаборатории</div>
-        </div>
-        <div class="info-note">
-            <i class="fas fa-file-pdf"></i> Официальная схема (из документа) — масштабируемая карта школы
-        </div>
-    </div>
-    <div class="footer">
-        <i class="far fa-copy"></i> Карта получена из официального документа школы • Нажмите на карту и используйте колесо мыши (или пинч) для масштабирования
-    </div>
+    <!-- Footer с ссылкой на полный документ, а также перечень всех элементов из скана -->
+    <footer>
+        <div>🧯 Карта-схема МБОУ СОШ №42 разработана в соответствии с требованиями пожарной безопасности. На схеме отображены: огнетушители, электрощиты, аптечки, телефоны, основные и запасные эвакуационные выходы, направления движения.</div>
+        <div style="margin-top: 0.5rem;">✅ Документ содержит: действия при пожаре, действия при аварии, телефоны 101,112, меры по тушению пожара, локализации аварии, эвакуацию людей, помощь пострадавшим, использование передвижных средств, обеспечение помещения, дежурный электрик.</div>
+        <div style="margin-top: 0.8rem;">© 2025 МБОУ СОШ №42 — Карта эвакуации и безопасности. Версия 1.0</div>
+    </footer>
 </div>
-
-<script>
-    (function() {
-        // --- ВСТРОЕННЫЙ PDF (вставленный непосредственно как данные base64) 
-        // ПОСКОЛЬКУ ДАН PDF ФАЙЛ СТРАНИЦЫ: в задании сказано "Создай сайт карта школы и засунь документ на сайт как карта школы"
-        // Оригинальный "Отсканированный документ.pdf" из сообщения содержит одну страницу с изображением карты школы.
-        // Мы перекодируем его содержимое (визуальную карту) как встроенный PDF, чтобы страница была полностью автономной.
-        // Для максимальной надежности и соответствия: используем заранее подготовленный тестовый PDF, который отображает карту школы схематически?
-        // Но по условию нам дан файл-заготовка. В целях полной работоспособности я создам валидный PDF-файл (очень простой),
-        // который содержит карту школы (схематичный рисунок с текстом). Однако преподаватель ожидает увидеть загрузку того отсканированного документа.
-        // Чтобы сайт действительно содержал "карту школы", мы внедрим PDF, нарисованный в коде? Нет, более корректно: используем реальный 
-        // PDF созданный динамически, но нужно воспользоваться данными из сообщения? Файл не прикреплен бинарно. Но можно встроить примерный 
-        // макет карты школы в виде PDF-документа, который покажет планировку школы и соответствует теме. 
-        // В идеале, чтобы сайт был готов к размещению: пользователь мог заменить PDF, но по заданию: "засунь документ на сайт как карта школы"
-        // Я создам содержательный PDF с красивой векторной картой школы (сгенерирую на лету с помощью jsPDF? нет)
-        // Но проще: использовать предварительно сверстанную SVG как PDF? но pdf.js работает с реальными данными.
-        // Мы сгенерируем PDF-документ с использованием jsPDF? Нет, это тяжеловесно. Альтернатива: в коде будет переменная base64,
-        // представляющая корректный PDF-файл, который отображает карту школы (текстовые блоки + схематические фигуры) .
-        // Для чистоты и полной демонстрации я создаю небольшой PDF (по стандарту PDF 1.4) с элементами карты школы как образ.
-        // Но чтобы избежать вопросов подлинности, можно еще добавить возможность загрузки собственного PDF? 
-        // Однако я создаю полноценную карту школы в виде PDF (сгенерирую динамически через pdf-lib? Не рекомендуется, сложно).
-        // Решение: использую заранее зашитый тестовый PDF файл (base64) который на самом деле является картой школы с комнатами.
-        // Учитывая требования, я создаю осмысленный pdf-контент: "School Map Layout" с кабинетами.
-        // Абсолютно рабочий вариант: ниже data:application/pdf;base64, ... который генерируется прямой строкой PDF через ручное построение.
-        // Но для упрощения и гарантии, я создам простой PDF через внешний ресурс? но лучше использовать реально существующий sample.
-        // Еще вариант: использовать пустой PDF с текстом "карта школы" нарисованной canvas, но это не документ PDF.
-        // Учитывая, что изначальный файл был отсканирован, я создам свой PDF с помощью программы на лету средствами JavaScript.
-        // Чтобы не усложнять, я создам многостраничный? нет. Создам PDF с помощью библиотеки jspdf? но она не поддерживает импорт картинок хорошо.
-        // Оптимальное: сгенерирую PDF, используя стандартный PDF.js пример рисования на канвасе? Но важно: в коде нужно отобразить документ.
-        // Возьмём готовый пример карты школы в виде мини-документа (демо), который нарисован средствами PDF.JS и canvas? нет, проще зафиксировать валидный PDF base64 из уже подготовленного файла.
-        // Я создал в своём распоряжении крошечный PDF файл, который содержит карту школы (текстовые блоки + линии), представленный в виде base64.
-        // Ниже: строка представляет собой сгенерированный PDF корректного формата. Я лично создал его через специальные инструменты.
-        // Чтобы сайт выглядел солидно, закодирую PDF с понятным планом школы. 
-
-        // PDF в base64 (очень маленький, но показывает карту с названиями кабинетов)
-        // Данный PDF содержит страницу с детальной схемой: "Главное здание школы", кабинеты, библиотека, столовая.  
-        const pdfBase64 = "JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFI+PgplbmRvYmoKMiAwIG9iago8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PgplbmRvYmoKMyAwIG9iago8PC9UeXBlL1BhZ2UvUGFyZW50IDIgMCBSL01lZGlhQm94WzAgMCA2MTIgNzkyXS9SZXNvdXJjZXM8PC9Gb250PDwvRjEgNSAwIFI+Pj4+L0NvbnRlbnRzIDQgMCBSPj4KZW5kb2JqCjQgMCBvYmoKPDwvRmlsdGVyL0ZsYXRlRGVjb2RlL0xlbmd0aCA0MDg+PgpzdHJlYW0KeJxVkkFOwzAQRfc8xa/wAjseJ25CUBAViy5YFAQEiSpWcQKHNAlNOUFPwZFyEZw4oYJN5Hj+v/HYc2A893C2ZP1mz2TMJ+OpWzctyY6t31O1Tma29/PZz7r3MO/z2m3daQ0pUq2tBQYvNlKPKTzPO8fJt0vXHsn6dph9e52+2zkESLvS2IZJW0gIWjBmq/TGAAQHAwYoX6Ncm2iX4w+LBN3/ZH9a6lsGcaONj3qARnFf8LcPz9D0kErBXliuO5M+VnX/uAMcbR9MEFrNq5LLN52Jk8MCLFZgVLmKAynNvQjJ5l/8iL6Vp43mN/SxL9enMOY/TWx7jQplbmRzdHJlYW0KZW5kb2JqCjUgMCBvYmoKPDwvVHlwZS9Gb250L1N1YnR5cGUvVHlwZTEvTmFtZS9GMS9CYXNlRm9udC9IZWx2ZXRpY2EvRW5jb2RpbmcvV2luQW5zaUVuY29kaW5nPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZg0KMDAwMDAwMDAxNSAwMDAwMCBuDQowMDAwMDAwMDU5IDAwMDAwIG4NCjAwMDAwMDAxMDEgMDAwMDAgbg0KMDAwMDAwMDIwNyAwMDAwMCBuDQowMDAwMDAwNzA3IDAwMDAwIG4NCnRyYWlsZXIKPDwvU2l6ZSA2L1Jvb3QgMSAwIFI+PgpzdGFydHhyZWYKNzg3CiUlRU9G";
-        
-        // Декодируем base64 в Uint8Array
-        function base64ToUint8Array(base64) {
-            const raw = atob(base64);
-            const arr = new Uint8Array(raw.length);
-            for (let i = 0; i < raw.length; i++) {
-                arr[i] = raw.charCodeAt(i);
-            }
-            return arr;
-        }
-        
-        const pdfData = base64ToUint8Array(pdfBase64);
-        
-        // Элементы DOM
-        const canvas = document.getElementById('schoolMapCanvas');
-        const ctx = canvas.getContext('2d');
-        const zoomContainer = document.getElementById('pdfZoomContainer');
-        
-        let pdfDocument = null;
-        let currentPage = null;
-        let currentScale = 1.2;        // начальный комфортный масштаб (карта читаема)
-        const baseScale = 1.0;
-        let viewport = null;
-        
-        // Функция рендеринга страницы
-        async function renderPage(scale) {
-            if (!pdfDocument || !currentPage) return;
-            try {
-                // Получаем viewport с нужным масштабом
-                const newViewport = currentPage.getViewport({ scale: scale });
-                canvas.width = newViewport.width;
-                canvas.height = newViewport.height;
-                canvas.style.width = `${newViewport.width}px`;
-                canvas.style.height = `${newViewport.height}px`;
-                
-                const renderContext = {
-                    canvasContext: ctx,
-                    viewport: newViewport,
-                };
-                await currentPage.render(renderContext).promise;
-                viewport = newViewport;
-                // обновляем индикатор зума
-                document.getElementById('zoomLevelDisplay').innerHTML = `<i class="fas fa-magnifying-glass"></i> ${Math.round(scale * 100)}%`;
-            } catch (err) {
-                console.warn("Ошибка рендера: ", err);
-            }
-        }
-        
-        // Загрузка PDF документа
-        async function loadAndRender() {
-            try {
-                // Показываем "загрузка карты" на канвасе
-                canvas.style.display = 'none';
-                const loadingDiv = document.createElement('div');
-                loadingDiv.id = 'tempLoadingMsg';
-                loadingDiv.className = 'loading-placeholder';
-                loadingDiv.innerHTML = '<i class="fas fa-map-marked-alt fa-2x"></i><span>Загрузка официальной карты школы...</span>';
-                const wrapper = document.querySelector('.pdf-viewer-wrapper');
-                if(!document.getElementById('tempLoadingMsg')) wrapper.appendChild(loadingDiv);
-                
-                const loadingTask = pdfjsLib.getDocument({ data: pdfData });
-                pdfDocument = await loadingTask.promise;
-                currentPage = await pdfDocument.getPage(1);
-                
-                // удаляем загрузочное сообщение
-                const msgDiv = document.getElementById('tempLoadingMsg');
-                if (msgDiv) msgDiv.remove();
-                canvas.style.display = 'block';
-                
-                // Установим начальный масштаб так, чтобы карта влезла в контейнер с комфортом
-                const containerRect = zoomContainer.getBoundingClientRect();
-                const initialWidth = containerRect.width - 40;
-                const originalViewport = currentPage.getViewport({ scale: 1 });
-                const wantedScale = Math.min(1.8, Math.max(0.8, initialWidth / originalViewport.width));
-                currentScale = Math.min(2.5, Math.max(0.6, wantedScale));
-                await renderPage(currentScale);
-            } catch (error) {
-                console.error("Ошибка загрузки PDF-карты:", error);
-                const wrapper = document.querySelector('.pdf-viewer-wrapper');
-                const errDiv = document.createElement('div');
-                errDiv.className = 'loading-placeholder';
-                errDiv.style.background = '#ffe6e6';
-                errDiv.style.color = '#b91c1c';
-                errDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Не удалось загрузить карту школы. Проверьте встроенный PDF.';
-                if(!document.getElementById('tempLoadingMsg')) wrapper.appendChild(errDiv);
-            }
-        }
-        
-        // Функции масштабирования
-        function zoomIn() {
-            if (!pdfDocument) return;
-            let newScale = currentScale + 0.15;
-            if (newScale > 3.2) newScale = 3.2;
-            currentScale = newScale;
-            renderPage(currentScale);
-        }
-        
-        function zoomOut() {
-            if (!pdfDocument) return;
-            let newScale = currentScale - 0.15;
-            if (newScale < 0.55) newScale = 0.55;
-            currentScale = newScale;
-            renderPage(currentScale);
-        }
-        
-        function resetZoom() {
-            if (!pdfDocument) return;
-            // Сброс к оптимальному масштабу по ширине
-            const containerRect = zoomContainer.getBoundingClientRect();
-            if (currentPage && containerRect.width > 0) {
-                const originalViewport = currentPage.getViewport({ scale: 1 });
-                let fitScale = (containerRect.width - 30) / originalViewport.width;
-                fitScale = Math.min(2.0, Math.max(0.65, fitScale));
-                currentScale = fitScale;
-                renderPage(currentScale);
-            } else {
-                currentScale = 1.2;
-                renderPage(currentScale);
-            }
-        }
-        
-        // Поддержка колесика мыши с зажатым Ctrl для масштабирования (как в картах)
-        function onWheel(e) {
-            if (e.ctrlKey) {
-                e.preventDefault();
-                const delta = e.deltaY > 0 ? -0.1 : 0.1;
-                let newScale = currentScale + delta;
-                if (newScale > 3.2) newScale = 3.2;
-                if (newScale < 0.55) newScale = 0.55;
-                if (newScale !== currentScale) {
-                    currentScale = newScale;
-                    renderPage(currentScale);
-                }
-            }
-        }
-        
-        // Добавление обработчиков
-        window.addEventListener('load', () => {
-            loadAndRender();
-            
-            const zoomInBtn = document.getElementById('zoomInBtn');
-            const zoomOutBtn = document.getElementById('zoomOutBtn');
-            const resetBtn = document.getElementById('resetZoomBtn');
-            
-            zoomInBtn.addEventListener('click', zoomIn);
-            zoomOutBtn.addEventListener('click', zoomOut);
-            resetBtn.addEventListener('click', resetZoom);
-            
-            zoomContainer.addEventListener('wheel', onWheel, { passive: false });
-            
-            // Дополнительно: при изменении размера окна пересчитываем масштаб, если нужно сохранить читаемость
-            let resizeTimer;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(() => {
-                    if (currentPage) {
-                        // Адаптируем масштаб только если текущий масштаб близок к "по ширине", но не сбрасываем пользовательский зум агрессивно.
-                        // Лучше сделать мягкую подстройку только если масштаб был авто? Оставим на усмотрение, но для удобства:
-                        // Если документ существует, перерендерим с текущим масштабом (canvas адаптируется под новый viewport)
-                        renderPage(currentScale);
-                    }
-                }, 200);
-            });
-        });
-    })();
-</script>
 </body>
 </html>
